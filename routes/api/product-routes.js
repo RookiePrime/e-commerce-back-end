@@ -8,10 +8,20 @@ router.get('/', (req, res) => {
   // find all products
   // be sure to include its associated Category and Tag data
   Product.findAll({
-    include: {
-      model: Category,
-      attributes: ['id', 'category_name']
-    }
+    include: [
+      {
+        model: Category,
+        attributes: ['id', 'category_name']
+      },
+      {
+        model: ProductTag,
+        attributes: ['tag_id', 'product_id'],
+        include: {
+          model: Tag,
+          attributes: ['id', 'tag_name']
+        }
+      }
+    ]
   })
       .then(productData => res.json(productData))
       .catch(err => {
@@ -28,10 +38,20 @@ router.get('/:id', (req, res) => {
     where: {
       id: req.params.id
     },
-    include: {
-      model: Category,
-      attributes: ['id', 'category_name']
-    }
+    include: [
+      {
+        model: Category,
+        attributes: ['id', 'category_name']
+      },
+      {
+        model: ProductTag,
+        attributes: ['tag_id', 'product_id'],
+        include: {
+          model: Tag,
+          attributes: ['id', 'tag_name']
+        }
+      }
+    ]
   })
     .then(productData => {
       if (!productData) {
@@ -115,7 +135,7 @@ router.put('/:id', (req, res) => {
     })
     .then((updatedProductTags) => res.json(updatedProductTags))
     .catch((err) => {
-      // console.log(err);
+      console.log(err);
       res.status(400).json(err);
     });
 });
